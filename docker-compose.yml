@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  API:
+    image: 'spring-boot-docker-trello.jar'
+    ports:
+      - "7071:7071"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/trello_rest_api
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=123
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+  postgresql:
+    image: postgres
+    ports:
+      - "2000:5432"
+    environment:
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=trello_rest_api
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
